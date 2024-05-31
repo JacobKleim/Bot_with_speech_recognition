@@ -42,12 +42,13 @@ def help_command(update: Update, context: CallbackContext) -> None:
 def echo(update: Update, context: CallbackContext) -> None:
     """Echo the user message."""
     text = update.message.text
-    responce = detect_intent_texts(
+    response = detect_intent_texts(
         dialog_flow_agent_id,
         update.effective_user.id,
         [text],
         language_code)
-    update.message.reply_text(responce)
+    if response:
+        update.message.reply_text(response)
 
 
 def main() -> None:

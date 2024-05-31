@@ -27,16 +27,17 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
 
 
 def echo(event, vk_api):
-    responce = detect_intent_texts(
+    response = detect_intent_texts(
         dialog_flow_agent_id,
         event.user_id,
         [event.text],
         language_code)
-    vk_api.messages.send(
-        user_id=event.user_id,
-        message=responce,
-        random_id=random.randint(1, 1000)
-    )
+    if response:
+        vk_api.messages.send(
+            user_id=event.user_id,
+            message=response,
+            random_id=random.randint(1, 1000)
+        )
 
 
 if __name__ == "__main__":
