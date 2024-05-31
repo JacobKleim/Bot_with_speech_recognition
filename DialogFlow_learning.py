@@ -50,4 +50,4 @@ def create_intent(project_id, display_name, training_phrases_parts, message_text
     print("Intent created: {}".format(response))
 
 
-create_intent(dialog_flow_agent_id, 'Как устроиться к вам на работу', training_phrases, [answer])    
+create_intent(dialog_flow_agent_id, 'Как устроиться к вам на работу', training_phrases, [answer])
