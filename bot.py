@@ -12,8 +12,8 @@ load_dotenv()
 
 credentials_path = os.getenv("CREDENTIALS")
 dialog_flow_agent_id = os.getenv("DIALOG_FLOW_AGENT_ID")
-print(dialog_flow_agent_id)
 language_code = "ru-RU"
+
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
 
 
