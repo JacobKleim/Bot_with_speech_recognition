@@ -1,3 +1,4 @@
+import logging
 import os
 import random
 
@@ -6,13 +7,34 @@ from dotenv import load_dotenv
 import vk_api as vk
 from vk_api.longpoll import VkLongPoll, VkEventType
 
+from dialogflow_detect_texts import detect_intent_texts
+
+
 load_dotenv()
 
 
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+)
+
+logger = logging.getLogger(__name__)
+
+credentials_path = os.getenv("CREDENTIALS")
+dialog_flow_agent_id = os.getenv("DIALOG_FLOW_AGENT_ID")
+language_code = "ru-RU"
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
+
+
 def echo(event, vk_api):
+    responce = detect_intent_texts(
+        dialog_flow_agent_id,
+        event.user_id,
+        [event.text],
+        language_code)
     vk_api.messages.send(
         user_id=event.user_id,
-        message=event.text,
+        message=responce,
         random_id=random.randint(1, 1000)
     )
 
