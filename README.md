@@ -12,7 +12,7 @@ The Telegram bot has the following functionality:
 
 ### Example Dialogue with the Telegram Bot:
 
-![Telegram Bot](https://github.com/JacobKleim/Bot_with_speech_recognition/assets/119351169/42ba127a-367a-4e39-9481-ea9868e02168)
+![Telegram Bot](https://github.com/JacobKleim/Bot_with_speech_recognition/blob/main/IMG_1876.MP4)
 
 ## VK Bot
 
@@ -20,7 +20,7 @@ The VK bot provides similar functionality but for the VKontakte social network. 
 
 ### Example Dialogue with the VK Bot:
 
-![VK Bot](https://github.com/JacobKleim/Bot_with_speech_recognition/assets/119351169/4020580f-6c06-4446-9fa6-707aa303053d)
+![VK Bot](https://github.com/JacobKleim/Bot_with_speech_recognition/blob/main/IMG_1878.MP4)
 
 ## DialogFlow
 
