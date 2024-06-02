@@ -12,15 +12,14 @@ The Telegram bot has the following functionality:
 
 ### Example Dialogue with the Telegram Bot:
 
-![Telegram Bot](![IMG_1876](https://github.com/JacobKleim/Bot_with_speech_recognition/assets/119351169/20f7c96d-bf67-4176-9533-a80f97214880))
-
+![Telegram Bot](https://github.com/JacobKleim/Bot_with_speech_recognition/assets/119351169/a95e6728-d910-4f2c-a812-52c05bd852c5)
 ## VK Bot
 
 The VK bot provides similar functionality but for the VKontakte social network. It also uses DialogFlow for message processing and responding.
 
 ### Example Dialogue with the VK Bot:
 
-![VK Bot](https://github.com/JacobKleim/Bot_with_speech_recognition/blob/main/IMG_1878.MP4)
+![VK Bot](https://github.com/JacobKleim/Bot_with_speech_recognition/assets/119351169/9bb7ac3d-c177-4c31-95e2-352ce43d980d)
 
 ## DialogFlow
 
