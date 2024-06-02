@@ -4,7 +4,7 @@
 ## Environment      
  Сreate and activate a virtual environment  
    ```
-   python -m venv venv
+   python3 -m venv venv
    ```
    ```bash
    source venv/Scripts/activate
@@ -15,8 +15,20 @@
    TELEGRAM_BOT_TOKEN=bot_token
    ```
 
+## Requirements
+   Update the Python package manager to the latest version:
+   ```
+   python -m pip install --upgrade pip
+   ```
+   Install dependencies:
+   ```
+   pip install -r requirements.txt
+   ``` 
 
 ## Run
    ```
-   python bot
+   python tg_bot.py
+   ```
+    ```
+   python vk_bot.py
    ```
