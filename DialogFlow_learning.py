@@ -1,5 +1,5 @@
-import os
 import json
+import os
 
 from dotenv import load_dotenv
 
@@ -17,12 +17,13 @@ with open("data.json", "r", encoding="UTF-8") as file:
 
 
 phrases = json.loads(data_json)
-print(phrases)
 training_phrases = phrases['Устройство на работу']['questions']
 answer = phrases['Устройство на работу']['answer']
 
 
-def create_intent(project_id, display_name, training_phrases_parts, message_texts):
+def create_intent(project_id, display_name,
+                  training_phrases_parts,
+                  message_texts):
     """Create an intent of the given intent type."""
     from google.cloud import dialogflow
 
@@ -31,8 +32,10 @@ def create_intent(project_id, display_name, training_phrases_parts, message_text
     parent = dialogflow.AgentsClient.agent_path(project_id)
     training_phrases = []
     for training_phrases_part in training_phrases_parts:
-        part = dialogflow.Intent.TrainingPhrase.Part(text=training_phrases_part)
-        # Here we create a new training phrase for each provided part.
+        part = dialogflow.Intent.TrainingPhrase.Part(
+            text=training_phrases_part
+            )
+
         training_phrase = dialogflow.Intent.TrainingPhrase(parts=[part])
         training_phrases.append(training_phrase)
 
@@ -40,7 +43,9 @@ def create_intent(project_id, display_name, training_phrases_parts, message_text
     message = dialogflow.Intent.Message(text=text)
 
     intent = dialogflow.Intent(
-        display_name=display_name, training_phrases=training_phrases, messages=[message]
+        display_name=display_name,
+        training_phrases=training_phrases,
+        messages=[message]
     )
 
     response = intents_client.create_intent(
@@ -50,4 +55,5 @@ def create_intent(project_id, display_name, training_phrases_parts, message_text
     print("Intent created: {}".format(response))
 
 
-create_intent(dialog_flow_agent_id, 'Как устроиться к вам на работу', training_phrases, [answer])
+create_intent(dialog_flow_agent_id, 'Как устроиться к вам на работу',
+              training_phrases, [answer])

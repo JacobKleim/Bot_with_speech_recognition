@@ -1,19 +1,22 @@
 import logging
 import os
+import time
 
+import requests
 from dotenv import load_dotenv
-
-from telegram import Update, ForceReply
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+from telegram import Update
+from telegram.ext import (CallbackContext, CommandHandler, Filters,
+                          MessageHandler, Updater)
 
 from dialogflow_detect_texts import detect_intent_texts
-
+from error_bot import notify_admin
 
 load_dotenv()
 
 
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
 )
 
 logger = logging.getLogger(__name__)
@@ -30,7 +33,6 @@ def start(update: Update, context: CallbackContext) -> None:
     user = update.effective_user
     update.message.reply_markdown_v2(
         fr'Здравствуйте {user.mention_markdown_v2()}\!',
-        reply_markup=ForceReply(selective=True),
     )
 
 
@@ -54,19 +56,40 @@ def echo(update: Update, context: CallbackContext) -> None:
 def main() -> None:
     """Start the bot."""
     bot_token = os.environ['TELEGRAM_BOT_TOKEN']
+    max_retries = 5
+    retry_count = 0
 
-    updater = Updater(bot_token)
+    while True:
+        try:
+            updater = Updater(bot_token)
 
-    dispatcher = updater.dispatcher
+            dispatcher = updater.dispatcher
 
-    dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(CommandHandler("help", help_command))
+            dispatcher.add_handler(CommandHandler("start", start))
+            dispatcher.add_handler(CommandHandler("help", help_command))
 
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
+            dispatcher.add_handler(
+                MessageHandler(Filters.text & ~Filters.command, echo))
+            updater.start_polling()
 
-    updater.start_polling()
+            updater.idle()
 
-    updater.idle()
+        except ConnectionError as con_error:
+            logger.error(f'Error{con_error}')
+            notify_admin(f"error: {con_error}")
+            retry_count += 1
+            if retry_count >= max_retries:
+                time.sleep(60)
+                retry_count = 0
+        except requests.exceptions.ReadTimeout as rt_error:
+            logger.error(f'Error{rt_error}')
+            notify_admin(f"error: {rt_error}")
+            time.sleep(60)
+
+        except Exception as e:
+            logger.error(f'ERROR {e}')
+            notify_admin(f"error: {e}")
+            time.sleep(5)
 
 
 if __name__ == '__main__':
