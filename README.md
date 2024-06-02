@@ -12,7 +12,7 @@ The Telegram bot has the following functionality:
 
 ### Example Dialogue with the Telegram Bot:
 
-![Telegram Bot](https://github.com/JacobKleim/Bot_with_speech_recognition/blob/main/IMG_1876.MP4)
+![Telegram Bot](![IMG_1876](https://github.com/JacobKleim/Bot_with_speech_recognition/assets/119351169/20f7c96d-bf67-4176-9533-a80f97214880))
 
 ## VK Bot
 
