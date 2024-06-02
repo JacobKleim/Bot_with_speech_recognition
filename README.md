@@ -1,10 +1,42 @@
 # Bot_with_speech_recognition
- 
+
+This repository contains two bots: a Telegram bot and a VK bot, developed using Python. Each of them is designed to interact with users through the respective messengers.
+
+## Telegram Bot
+
+The Telegram bot has the following functionality:
+
+- Responds to user text messages.
+- Utilizes DialogFlow for message processing and providing responses.
+- Can be configured for various commands and dialogue scenarios.
+
+### Example Dialogue with the Telegram Bot:
+
+![Telegram Bot](https://github.com/JacobKleim/Bot_with_speech_recognition/assets/119351169/42ba127a-367a-4e39-9481-ea9868e02168)
+
+## VK Bot
+
+The VK bot provides similar functionality but for the VKontakte social network. It also uses DialogFlow for message processing and responding.
+
+### Example Dialogue with the VK Bot:
+
+![VK Bot](https://github.com/JacobKleim/Bot_with_speech_recognition/assets/119351169/4020580f-6c06-4446-9fa6-707aa303053d)
+
+## DialogFlow
+
+DialogFlow is a platform for creating chatbots, which has extensive capabilities for natural language processing and creating conversational interfaces. We use DialogFlow to train our bots and provide them with intelligent capabilities.
+
+## Examples of Working Bots
+
+You can try out the operation of our bots by following these links:
+
+- [Telegram Bot](https://t.me/assistant_peoples_bot)
+- [VK Bot](https://vk.com/invite/2yzODoo)
 
 ## Environment      
  Сreate and activate a virtual environment  
    ```
-   python3 -m venv venv
+   python -m venv venv
    ```
    ```bash
    source venv/Scripts/activate
@@ -12,23 +44,40 @@
  Get a bot token using **@BotFather** on Telegram.
  Create an .env file and put the bot token in there:
    ```python 
-   TELEGRAM_BOT_TOKEN=bot_token
+   TELEGRAM_BOT_TOKEN=tg bot token
+   ```
+   ```python 
+   VK_GROUP_TOKEN=vk group token
+   ```
+   ```python 
+   CREDENTIALS=path for 'GOOGLE_APPLICATION_CREDENTIALS'
+   ```
+   ```python 
+   DIALOG_FLOW_AGENT_ID=dialogflow project id
+   ```
+   ```python 
+   ADMIN_TG_ID=admin telegram id
+   ```
+   ```python 
+   SEND_ERROR_BOT_TOKEN=token for error_bot
    ```
 
 ## Requirements
    Update the Python package manager to the latest version:
    ```
-   python -m pip install --upgrade pip
+   python3 -m pip install --upgrade pip
    ```
    Install dependencies:
    ```
    pip install -r requirements.txt
    ``` 
 
+
+
 ## Run
    ```
    python tg_bot.py
    ```
-    ```
+   ```
    python vk_bot.py
    ```
