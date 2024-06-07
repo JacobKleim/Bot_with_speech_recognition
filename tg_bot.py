@@ -15,11 +15,8 @@ import error_bot
 
 logger = logging.getLogger(__name__)
 
-credentials_path = os.getenv("CREDENTIALS")
-dialog_flow_agent_id = os.getenv("DIALOG_FLOW_AGENT_ID")
-language_code = "ru-RU"
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
+LANGUAGE_CODE = "ru-RU"
 
 
 def start(update: Update, context: CallbackContext) -> None:
@@ -30,15 +27,17 @@ def start(update: Update, context: CallbackContext) -> None:
     )
 
 
-def get_answer(update: Update, context: CallbackContext) -> None:
+def get_answer(update: Update,
+               context: CallbackContext,
+               dialog_flow_agent_id) -> None:
     """Answer the user message using Dialogflow."""
     text = update.message.text
     response = detect_intent_texts(
         dialog_flow_agent_id,
         update.effective_user.id,
         [text],
-        language_code)
-    update.message.reply_text(response)
+        LANGUAGE_CODE)
+    update.message.reply_text(response.fulfillment_text)
 
 
 def main() -> None:
@@ -49,7 +48,9 @@ def main() -> None:
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         level=logging.INFO
     )
-
+    dialog_flow_agent_id = os.getenv("DIALOG_FLOW_AGENT_ID")
+    credentials_path = os.getenv("CREDENTIALS")
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
     bot_token = os.environ['TELEGRAM_BOT_TOKEN']
 
     while True:
@@ -61,7 +62,11 @@ def main() -> None:
             dispatcher.add_handler(CommandHandler("start", start))
 
             dispatcher.add_handler(
-                MessageHandler(Filters.text & ~Filters.command, get_answer))
+                MessageHandler(Filters.text & ~Filters.command,
+                               lambda update,
+                               context: get_answer(update,
+                                                   context,
+                                                   dialog_flow_agent_id)))
             updater.start_polling()
 
             updater.idle()
