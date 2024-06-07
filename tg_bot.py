@@ -2,22 +2,16 @@ import logging
 import os
 import time
 
-import requests
 from dotenv import load_dotenv
+
 from telegram import Update
 from telegram.ext import (CallbackContext, CommandHandler, Filters,
                           MessageHandler, Updater)
 
 from dialogflow_detect_texts import detect_intent_texts
-from error_bot import notify_admin
 
-load_dotenv()
+import error_bot
 
-
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
 
 logger = logging.getLogger(__name__)
 
@@ -36,28 +30,27 @@ def start(update: Update, context: CallbackContext) -> None:
     )
 
 
-def help_command(update: Update, context: CallbackContext) -> None:
-    """Send a message when the command /help is issued."""
-    update.message.reply_text('Help!')
-
-
-def echo(update: Update, context: CallbackContext) -> None:
-    """Echo the user message."""
+def get_answer(update: Update, context: CallbackContext) -> None:
+    """Answer the user message using Dialogflow."""
     text = update.message.text
     response = detect_intent_texts(
         dialog_flow_agent_id,
         update.effective_user.id,
         [text],
         language_code)
-    if response:
-        update.message.reply_text(response)
+    update.message.reply_text(response)
 
 
 def main() -> None:
     """Start the bot."""
+    load_dotenv()
+
+    logging.basicConfig(
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        level=logging.INFO
+    )
+
     bot_token = os.environ['TELEGRAM_BOT_TOKEN']
-    max_retries = 5
-    retry_count = 0
 
     while True:
         try:
@@ -66,29 +59,16 @@ def main() -> None:
             dispatcher = updater.dispatcher
 
             dispatcher.add_handler(CommandHandler("start", start))
-            dispatcher.add_handler(CommandHandler("help", help_command))
 
             dispatcher.add_handler(
-                MessageHandler(Filters.text & ~Filters.command, echo))
+                MessageHandler(Filters.text & ~Filters.command, get_answer))
             updater.start_polling()
 
             updater.idle()
 
-        except ConnectionError as con_error:
-            logger.error(f'Error{con_error}')
-            notify_admin(f"error: {con_error}")
-            retry_count += 1
-            if retry_count >= max_retries:
-                time.sleep(60)
-                retry_count = 0
-        except requests.exceptions.ReadTimeout as rt_error:
-            logger.error(f'Error{rt_error}')
-            notify_admin(f"error: {rt_error}")
-            time.sleep(60)
-
         except Exception as e:
             logger.error(f'ERROR {e}')
-            notify_admin(f"error: {e}")
+            error_bot.main(f"error: {e}")
             time.sleep(5)
 
 

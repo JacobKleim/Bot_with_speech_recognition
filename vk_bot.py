@@ -3,22 +3,16 @@ import os
 import random
 import time
 
-import requests
+from dotenv import load_dotenv
+
 import telegram
 import vk_api as vk
-from dotenv import load_dotenv
 from vk_api.longpoll import VkEventType, VkLongPoll
 
 from dialogflow_detect_texts import detect_intent_texts
-from error_bot import notify_admin
 
-load_dotenv()
+import error_bot
 
-
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +23,8 @@ language_code = "ru-RU"
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
 
 
-def echo(event, vk_api):
+def get_answer(event, vk_api):
+    """Answer the user message using Dialogflow."""
     response = detect_intent_texts(
         dialog_flow_agent_id,
         event.user_id,
@@ -44,9 +39,14 @@ def echo(event, vk_api):
 
 
 def main() -> None:
+    load_dotenv()
+
+    logging.basicConfig(
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        level=logging.INFO
+    )
+
     vk_group_token = os.getenv("VK_GROUP_TOKEN")
-    max_retries = 5
-    retry_count = 0
 
     while True:
         try:
@@ -56,35 +56,12 @@ def main() -> None:
 
             for event in longpoll.listen():
                 if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-                    echo(event, vk_api)
-
-        except ConnectionError as con_error:
-            logger.error(f'Error {con_error}')
-            try:
-                notify_admin(f"error: {con_error}")
-            except telegram.error.NetworkError as ne:
-                logger.error(f'NetworkError {ne} while notifying admin')
-            retry_count += 1
-            if retry_count >= max_retries:
-                time.sleep(60)
-                retry_count = 0
-
-        except requests.exceptions.ReadTimeout as rt_error:
-            logger.error(f'Error {rt_error}')
-            try:
-                notify_admin(f"error: {rt_error}")
-            except telegram.error.NetworkError as ne:
-                logger.error(f'NetworkError {ne} while notifying admin')
-            time.sleep(60)
-
-        except telegram.error.NetworkError as ne:
-            logger.error(f'NetworkError {ne}')
-            time.sleep(60)
+                    get_answer(event, vk_api)
 
         except Exception as e:
             logger.error(f'ERROR {e}')
             try:
-                notify_admin(f"error: {e}")
+                error_bot.main(f"error: {e}")
             except telegram.error.NetworkError as ne:
                 logger.error(f'NetworkError {ne} while notifying admin')
             time.sleep(5)

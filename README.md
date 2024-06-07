@@ -25,6 +25,41 @@ The VK bot provides similar functionality but for the VKontakte social network. 
 
 DialogFlow is a platform for creating chatbots, which has extensive capabilities for natural language processing and creating conversational interfaces. We use DialogFlow to train our bots and provide them with intelligent capabilities.
 
+## dialogflow_learning.py script
+This script is used to create intents in Google DialogFlow based on data provided in a JSON file. It loads configurations from the .env file, uses those settings for authentication, and creates the intents specified in the JSON file.
+Function 'create_intent'
+This function creates an intent in Google DialogFlow.
+
+Arguments:
+project_id: the ID of your project in Google Cloud.
+display_name: the name of the intent to be created.
+training_phrases_parts: A list of training phrases (questions) for this intent.
+message_texts: The response that will be sent to the user.
+
+### Usage
+If your project does not have a “data-json” file, the script can accept the path to the JSON data file via the optional -d or --data_path command line argument.
+```json
+{
+    "Intent1": {
+        "questions": ["How do I apply for a job?", "What are the job requirements?"],
+        "answer": "You can apply for a job by visiting our careers page."
+    },
+    "Intent2": {
+        "questions": ["What are your working hours?", "When are you open?"],
+        "answer": "Our working hours are from 9 AM to 5 PM, Monday to Friday."
+    }
+}
+```
+
+### An example of how to run the script:
+   ```
+   python dialogflow_learning.py -d path/to/your/data.json
+   ```
+### An example of a startup with a relative path:
+   ```
+   python dialogflow_learning.py -d ./data.json
+   ```
+
 ## Examples of Working Bots
 
 You can try out the operation of our bots by following these links:
