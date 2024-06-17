@@ -11,10 +11,10 @@ from vk_api.longpoll import VkEventType, VkLongPoll
 
 from dialogflow_detect_texts import detect_intent_texts
 
-import error_bot
+from tg_bot import TelegramErrorHandler
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('VK_BOT')
 
 
 LANGUAGE_CODE = "ru-RU"
@@ -48,6 +48,14 @@ def main() -> None:
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
     vk_group_token = os.getenv("VK_GROUP_TOKEN")
 
+    send_error_tg_bot_token = os.environ['SEND_ERROR_BOT_TOKEN']
+    admin_tg_id = os.environ['ADMIN_TG_ID']
+
+    telegram_error_handler = TelegramErrorHandler(send_error_tg_bot_token,
+                                                  admin_tg_id)
+    telegram_error_handler.setLevel(logging.ERROR)
+    logger.addHandler(telegram_error_handler)
+
     while True:
         try:
             logger.info('Bot started')
@@ -60,12 +68,11 @@ def main() -> None:
                     get_answer(event, vk_api, dialog_flow_agent_id)
 
         except Exception as e:
-            logger.error(f'ERROR {e}')
             try:
-                error_bot.main(f"error: {e}")
+                logger.error(f'ERROR {e}')
             except telegram.error.NetworkError as ne:
                 logger.error(f'NetworkError {ne} while notifying admin')
-            time.sleep(5)
+            time.sleep(10)
 
 
 if __name__ == '__main__':

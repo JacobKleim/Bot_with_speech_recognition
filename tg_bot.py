@@ -3,20 +3,28 @@ import os
 import time
 
 from dotenv import load_dotenv
-
-from telegram import Update
+from telegram import Bot, Update
 from telegram.ext import (CallbackContext, CommandHandler, Filters,
                           MessageHandler, Updater)
 
 from dialogflow_detect_texts import detect_intent_texts
 
-import error_bot
 
-
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('TG_BOT')
 
 
 LANGUAGE_CODE = "ru-RU"
+
+
+class TelegramErrorHandler(logging.Handler):
+    def __init__(self, tg_token, chat_id):
+        super().__init__()
+        self.bot = Bot(token=tg_token)
+        self.chat_id = chat_id
+
+    def emit(self, record):
+        log_entry = self.format(record)
+        self.bot.send_message(chat_id=self.chat_id, text=log_entry)
 
 
 def start(update: Update, context: CallbackContext) -> None:
@@ -48,10 +56,18 @@ def main() -> None:
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         level=logging.INFO
     )
+
     dialog_flow_agent_id = os.getenv("DIALOG_FLOW_AGENT_ID")
     credentials_path = os.getenv("CREDENTIALS")
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
+    send_error_tg_bot_token = os.environ['SEND_ERROR_BOT_TOKEN']
     bot_token = os.environ['TELEGRAM_BOT_TOKEN']
+    admin_tg_id = os.environ['ADMIN_TG_ID']
+
+    telegram_error_handler = TelegramErrorHandler(send_error_tg_bot_token,
+                                                  admin_tg_id)
+    telegram_error_handler.setLevel(logging.ERROR)
+    logger.addHandler(telegram_error_handler)
 
     while True:
         try:
@@ -73,8 +89,7 @@ def main() -> None:
 
         except Exception as e:
             logger.error(f'ERROR {e}')
-            error_bot.main(f"error: {e}")
-            time.sleep(5)
+            time.sleep(10)
 
 
 if __name__ == '__main__':

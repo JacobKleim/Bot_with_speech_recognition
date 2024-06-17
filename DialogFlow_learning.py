@@ -43,7 +43,7 @@ def create_intent(project_id, display_name,
 def main():
     load_dotenv()
     parser = argparse.ArgumentParser(description="DialogFlow learning script")
-    parser.add_argument('-d', '--data_path', type=str,
+    parser.add_argument('-d', '--data_path', type=str, default='data.json',
                         help='Path to the data JSON file')
     args = parser.parse_args()
 
@@ -51,22 +51,17 @@ def main():
     dialog_flow_agent_id = os.getenv("DIALOG_FLOW_AGENT_ID")
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
 
-    path = "data.json"
+    with open(args.data_path, "r", encoding="UTF-8") as file:
+        json_content = file.read()
 
-    if args.data_path:
-        path = args.data_path
+    phrases = json.loads(json_content)
 
-    with open(path, "r", encoding="UTF-8") as file:
-        data_json = file.read()
+    for intent_name, intent_info in phrases.items():
 
-    phrases = json.loads(data_json)
+        training_phrases = intent_info['questions']
+        answer = intent_info['answer']
 
-    for key in phrases:
-
-        training_phrases = phrases[key]['questions']
-        answer = phrases[key]['answer']
-
-        create_intent(dialog_flow_agent_id, key,
+        create_intent(dialog_flow_agent_id, intent_name,
                       training_phrases, [answer])
 
 
