@@ -3,28 +3,19 @@ import os
 import time
 
 from dotenv import load_dotenv
-from telegram import Bot, Update
+from telegram import Update
 from telegram.ext import (CallbackContext, CommandHandler, Filters,
                           MessageHandler, Updater)
 
 from dialogflow_detect_texts import detect_intent_texts
+
+from telegram_error_handler import TelegramErrorHandler
 
 
 logger = logging.getLogger('TG_BOT')
 
 
 LANGUAGE_CODE = "ru-RU"
-
-
-class TelegramErrorHandler(logging.Handler):
-    def __init__(self, tg_token, chat_id):
-        super().__init__()
-        self.bot = Bot(token=tg_token)
-        self.chat_id = chat_id
-
-    def emit(self, record):
-        log_entry = self.format(record)
-        self.bot.send_message(chat_id=self.chat_id, text=log_entry)
 
 
 def start(update: Update, context: CallbackContext) -> None:

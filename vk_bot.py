@@ -11,7 +11,7 @@ from vk_api.longpoll import VkEventType, VkLongPoll
 
 from dialogflow_detect_texts import detect_intent_texts
 
-from tg_bot import TelegramErrorHandler
+from telegram_error_handler import TelegramErrorHandler
 
 
 logger = logging.getLogger('VK_BOT')
